@@ -1,0 +1,95 @@
+class ComputerGuesser {
+    field int dummy;
+    constructor ComputerGuesser new() { return this; }
+    method void dispose() { do Memory.deAlloc(this); return; }
+
+    method void run() {
+        var int donja, gornja, pokusajRacunala, odgovor, brojPokusaja;
+        var boolean igraTraje;
+        var String msg;
+
+        do Screen.clearScreen();
+        do Output.moveCursor(2, 15);
+        do Output.printString("--- MOD: RACUNALO POGADJA ---");
+        do Output.moveCursor(5, 5);
+        do Output.printString("Zamislite broj od 1 do 100 u glavi.");
+        do Output.moveCursor(7, 5);
+        do Output.printString("Racunalo ce ga pokusati pogoditi...");
+        do Output.moveCursor(9, 5);
+        do Output.printString("Pritisnite bilo koju tipku kada ste spremni.");
+        
+        while (Keyboard.keyPressed() = 0) {}
+        while (~(Keyboard.keyPressed() = 0)) {}
+
+        let donja = 1;
+        let gornja = 100;
+        let brojPokusaja = 0;
+        let igraTraje = true;
+
+        while (igraTraje) {
+            let brojPokusaja = brojPokusaja + 1;
+            let pokusajRacunala = (donja + gornja) / 2;
+
+            do Screen.clearScreen();
+            do Screen.drawRectangle(30, 20, 480, 24);
+            do Screen.drawRectangle(30, 70, 480, 74);
+            
+            do Output.moveCursor(4, 6);
+            do Output.printString("Je li vas broj: ");
+            do Output.printInt(pokusajRacunala);
+            do Output.printString("? (Pokusaj "); do Output.printInt(brojPokusaja); do Output.printString(")");
+
+            do Output.moveCursor(9, 10);
+            do Output.printString("1. Moj broj je VECI");
+            do Output.moveCursor(11, 10);
+            do Output.printString("2. Moj broj je MANJI");
+            do Output.moveCursor(13, 10);
+            do Output.printString("3. TO JE TAJ BROJ! (Pogodjeno)");
+
+            let odgovor = 0;
+            while ((odgovor < 1) | (odgovor > 3)) {
+                do Output.moveCursor(16, 10);
+                let msg = "Vas odgovor (1-3): ";
+                let odgovor = Keyboard.readInt(msg);
+                do msg.dispose(); 
+            }
+
+            if (odgovor = 1) { let donja= pokusajRacunala + 1; }
+            if (odgovor = 2) { let gornja = pokusajRacunala - 1; }
+            if (odgovor = 3) { let igraTraje = false; }
+
+            if (donja > gornja) {
+                do Screen.clearScreen();
+                do Output.moveCursor(10, 5);
+                do Output.printString("HEJ! Nemoj varati! Nemoguce je pronaci broj");
+                do Output.moveCursor(12, 5);
+                do Output.printString("uz odgovore koje ste dali.");
+                do Output.moveCursor(15, 5);
+                do Output.printString("Pritisnite tipku za povratak...");
+                while (Keyboard.keyPressed() = 0) {}
+                while (~(Keyboard.keyPressed() = 0)) {}
+                return;
+            }
+        }
+
+        do Screen.clearScreen();
+        do Screen.drawRectangle(50, 50, 460, 150);
+        do Screen.setColor(false);
+        do Screen.drawRectangle(54, 54, 456, 146);
+        do Screen.setColor(true);
+
+        do Output.moveCursor(7, 12);
+        do Output.printString("Pobjeda za AI! Pogodio sam u ");
+        do Output.printInt(brojPokusaja);
+        do Output.printString(" pokusaja.");
+        do Output.moveCursor(9, 15);
+        do Output.printString("Vas broj je bio: ");
+        do Output.printInt(pokusajRacunala);
+
+        do Output.moveCursor(13, 12);
+        do Output.printString("Pritisnite bilo koju tipku za izbornik...");
+        while (Keyboard.keyPressed() = 0) {}
+        while (~(Keyboard.keyPressed() = 0)) {}
+        return;
+    }
+}

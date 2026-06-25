@@ -1,0 +1,202 @@
+class GuessGame {
+    field int zamisljeni;
+    field int najveciBroj;
+    field int brPokusaja;
+    field int vrijednost;
+
+    constructor GuessGame new() {
+        let vrijednost = 7; 
+        return this;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    
+    method int nextRandom() {
+        
+        let vrijednost = (vrijednost * 17) + 5;
+        
+        
+        if (vrijednost < 0) {
+            let vrijednost = -vrijednost;
+        }
+        
+        if (vrijednost < 0) {
+            let vrijednost = 0;
+        }
+        
+        return (vrijednost - ((vrijednost / najveciBroj) * najveciBroj)) + 1;
+    }
+
+    method void drawHeader(String title) {
+        do Screen.setColor(true);
+        do Screen.drawRectangle(40, 20, 472, 22);
+        do Screen.drawRectangle(40, 50, 472, 52);
+        do Output.moveCursor(2, 18);
+        do Output.printString(title);
+        return;
+    }
+
+    
+    method void drawAttemptSquares(int remaining) {
+        var int i, x;
+        let i = 0;
+        let x = 60;
+
+        do Screen.setColor(false);
+        do Screen.drawRectangle(55, 65, 460, 85);
+        do Screen.setColor(true);
+
+        while (i < remaining) {
+            do Screen.drawRectangle(x, 68, x + 14, 82);
+            let x = x + 20;
+            let i = i + 1;
+        }
+        return;
+    }
+
+    
+    method int chooseDifficulty() {
+        var int izbor;
+
+        do Screen.clearScreen();
+        do drawHeader("--- ODABIR RAZINE TEZINE ---");
+
+        do Output.moveCursor(8, 12);
+        do Output.printString("1. Easy   (1 - 50,  5 pokusaja)");
+        do Output.moveCursor(10, 12);
+        do Output.printString("2. Medium (1 - 100, 7 pokusaja)");
+        do Output.moveCursor(12, 12);
+        do Output.printString("3. Hard   (1 - 500, 10 pokusaja)");
+
+        let izbor = 0;
+        while ((izbor < 1) | (izbor > 3)) {
+            do Output.moveCursor(16, 12);
+            do Output.printString("Odaberite razinu (1-3): ");
+            let izbor = Keyboard.readInt("");
+        }
+        return izbor;
+    }
+
+    method void applyDifficulty(int level) {
+        if (level = 1) {
+            let najveciBroj = 50;
+            let brPokusaja = 5;
+        }
+        if (level = 2) {
+            let najveciBroj = 100;
+            let brPokusaja = 7;
+        }
+        if (level = 3) {
+            let najveciBroj = 500;
+            let brPokusaja = 10;
+        }
+        return;
+    }
+
+    method void run() {
+        var int level, pokusaj, unos, preostaloPokusaja;
+        var boolean pobjeda, valjanUnos;
+
+        do Screen.clearScreen();
+        do Output.moveCursor(5, 10);
+        do Output.printString("Pritisnite bilo koju tipku za pocetak...");
+
+        while (Keyboard.keyPressed() = 0) {
+            let vrijednost = vrijednost + 1;
+            if (vrijednost > 32760) {
+                let vrijednost = 0; 
+            }
+        }
+        
+        while (~(Keyboard.keyPressed() = 0)) {}
+
+        let level = chooseDifficulty();
+        do applyDifficulty(level);
+        let zamisljeni = nextRandom();
+
+        let pokusaj = 0;
+        let pobjeda = false;
+
+        while ((pokusaj < brPokusaja) & (~pobjeda)) {
+            let preostaloPokusaja  = brPokusaja - pokusaj;
+
+            do Screen.clearScreen();
+            do drawHeader("--- POGODI BROJ ---");
+            do drawAttemptSquares(preostaloPokusaja);
+
+            do Output.moveCursor(11, 5);
+            do Output.printString("Raspon: 1 - ");
+            do Output.printInt(najveciBroj);
+            do Output.moveCursor(13, 5);
+            do Output.printString("Preostalo pokusaja: ");
+            do Output.printInt(preostaloPokusaja);
+
+            let valjanUnos = false;
+            while (~valjanUnos) {
+                do Output.moveCursor(16, 5);
+                do Output.printString("Unesite broj: ");
+                let unos = Keyboard.readInt("");
+                if ((unos < 1) | (unos > najveciBroj)) {
+                    do Output.moveCursor(18, 5);
+                    do Output.printString("Broj mora biti u rasponu! Pokusajte ponovno.");
+                } else {
+                    let valjanUnos = true;
+                }
+            }
+
+            let pokusaj = pokusaj + 1;
+
+            if (unos = zamisljeni) {
+                let pobjeda = true;
+            } else {
+                do Screen.setColor(false);
+                do Screen.drawRectangle(55, 95, 460, 115);
+                do Screen.setColor(true);
+                do Output.moveCursor(13, 8);
+                if (unos < zamisljeni) {
+                    do Output.printString("Zamisljeni broj je VECI od ");
+                } else {
+                    do Output.printString("Zamisljeni broj je MANJI od ");
+                }
+                do Output.printInt(unos);
+
+                do Output.moveCursor(20, 5);
+                do Output.printString("Pritisnite tipku za sljedeci pokusaj...");
+                while (Keyboard.keyPressed() = 0) {}
+                while (~(Keyboard.keyPressed() = 0)) {}
+            }
+        }
+
+        do Screen.clearScreen();
+        do Screen.drawRectangle(50, 50, 460, 150);
+        do Screen.setColor(false);
+        do Screen.drawRectangle(54, 54, 456, 146);
+        do Screen.setColor(true);
+
+        if (pobjeda) {
+            do Output.moveCursor(7, 12);
+            do Output.printString("Cestitamo! Pogodili ste broj ");
+            do Output.printInt(zamisljeni);
+            do Output.moveCursor(9, 12);
+            do Output.printString("u ");
+            do Output.printInt(pokusaj);
+            do Output.printString(" pokusaja.");
+        } else {
+            do Output.moveCursor(7, 12);
+            do Output.printString("Izgubili ste! Iskoristili ste sve pokusaje.");
+            do Output.moveCursor(9, 12);
+            do Output.printString("Zamisljeni broj je bio: ");
+            do Output.printInt(zamisljeni);
+        }
+
+        do Output.moveCursor(13, 12);
+        do Output.printString("Pritisnite bilo koju tipku za izbornik...");
+        while (Keyboard.keyPressed() = 0) {}
+        while (~(Keyboard.keyPressed() = 0)) {}
+        return;
+    }
+}

@@ -1,0 +1,53 @@
+class Main {
+    function void main() {
+        var int mod;
+        var boolean pokrenuto;
+        var GuessGame igraCovjeka;
+        var ComputerGuesser igraRacunala;
+
+        let pokrenuto = true;
+
+        while (pokrenuto) {
+            do Screen.clearScreen();
+            
+            do Screen.drawRectangle(100, 40, 412, 45);   
+            do Screen.drawRectangle(100, 180, 412, 185); 
+            
+            do Output.moveCursor(5, 18);
+            do Output.printString("--- GLAVNI IZBORNIK ---");
+            do Output.moveCursor(8, 15);
+            do Output.printString("1. Vi pogadjate (Covjek Mod)");
+            do Output.moveCursor(10, 15);
+            do Output.printString("2. Racunalo pogadja (AI Mod)");
+            do Output.moveCursor(12, 15);
+            do Output.printString("3. Izlaz iz igre");
+            
+            
+            let mod = 0;
+            while ((mod < 1) | (mod > 3)) {
+                do Output.moveCursor(15, 15);
+                do Output.printString("Odaberite opciju (1-3): ");
+                let mod = Keyboard.readInt("");
+            }
+
+            if (mod = 1) {
+                let igraCovjeka = GuessGame.new();
+                do igraCovjeka.run();
+                do igraCovjeka.dispose();
+            }
+            if (mod = 2) {
+                let igraRacunala = ComputerGuesser.new();
+                do igraRacunala.run();
+                do igraRacunala.dispose();
+            }
+            if (mod = 3) {
+                let pokrenuto = false;
+            }
+        }
+
+        do Screen.clearScreen();
+        do Output.moveCursor(10, 20);
+        do Output.printString("Hvala na igranju! Pozdrav!");
+        return;
+    }
+}
